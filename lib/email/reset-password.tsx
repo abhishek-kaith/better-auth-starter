@@ -38,7 +38,8 @@ export const ResetPasswordEmail = ({
               Hello {username},
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              We received a request to reset your password for your {siteConfig.name}
+              We received a request to reset your password for your{" "}
+              {siteConfig.name}
               account. If you didn't make this request, you can safely ignore
               this email.
             </Text>
@@ -67,10 +68,3 @@ export const ResetPasswordEmail = ({
     </Html>
   );
 };
-
-export function reactResetPasswordEmail(
-  props: AuthResetPasswordEmailProps,
-) {
-  console.log(props);
-  return <ResetPasswordEmail {...props} />;
-}

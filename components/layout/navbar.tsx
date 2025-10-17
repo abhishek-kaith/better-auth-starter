@@ -1,6 +1,9 @@
+"use client";
+
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import UserActions from "@/components/layout/user-actions";
 import {
   Accordion,
   AccordionContent,
@@ -42,12 +45,8 @@ const Navbar = () => {
     alt: siteConfig.name,
     title: siteConfig.name,
   };
-  const auth = {
-    login: { title: "Login", url: PATHS.signIn },
-    signup: { title: "Sign up", url: PATHS.signUp },
-  };
   return (
-    <section className="py-4">
+    <section className="py-2">
       <div className="container">
         {/* Desktop Menu */}
         <nav className="hidden justify-between lg:flex">
@@ -58,7 +57,7 @@ const Navbar = () => {
                 src={logo.src}
                 height={60}
                 width={150}
-                className="max-h-8 dark:invert w-auto"
+                className="max-h-8 w-auto"
                 alt={logo.alt}
               />
               <span className="text-lg font-semibold tracking-tighter">
@@ -73,14 +72,7 @@ const Navbar = () => {
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
-          </div>
+          <UserActions />
         </nav>
 
         {/* Mobile Menu */}
@@ -92,7 +84,7 @@ const Navbar = () => {
                 src={logo.src}
                 width={150}
                 height={60}
-                className="max-h-8 dark:invert w-full"
+                className="max-h-8 w-full"
                 alt={logo.alt}
               />
             </Link>
@@ -110,7 +102,7 @@ const Navbar = () => {
                         height={60}
                         width={150}
                         src={logo.src}
-                        className="max-h-8 dark:invert"
+                        className="max-h-8 w-auto"
                         alt={logo.alt}
                       />
                     </a>
@@ -126,12 +118,7 @@ const Navbar = () => {
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <Link href={auth.login.url}>{auth.login.title}</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                    </Button>
+                    <UserActions />
                   </div>
                 </div>
               </SheetContent>

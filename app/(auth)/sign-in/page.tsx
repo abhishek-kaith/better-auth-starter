@@ -63,7 +63,10 @@ export default function SignIn() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link href={PATHS.forgetPassword} className="ml-auto inline-block text-sm underline">
+              <Link
+                href={PATHS.forgetPassword}
+                className="ml-auto inline-block text-sm underline"
+              >
                 Forgot your password?
               </Link>
             </div>
@@ -97,7 +100,7 @@ export default function SignIn() {
                 await signIn.email(
                   { email, password, rememberMe },
                   {
-                    onSuccess(context) {
+                    onSuccess(_context) {
                       toast.success("Successfully signed in");
                       router.push(getCallbackURL(params));
                     },

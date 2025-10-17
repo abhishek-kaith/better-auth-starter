@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Inconsolata, Poppins, Tinos } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "@/styles/global.css";
+import Provider from "@/components/provider";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
-import Provider from "@/components/provider";
 
 const poppins = Poppins({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
@@ -35,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light" suppressHydrationWarning>
       <body
         className={cn(
           "antialiased",
@@ -44,6 +45,7 @@ export default function RootLayout({
           tinos.variable,
         )}
       >
+        <Toaster />
         <Provider>{children}</Provider>
       </body>
     </html>

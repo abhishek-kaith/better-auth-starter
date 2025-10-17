@@ -9,6 +9,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     SMTP_URL: z.string(),
     EMAIL_FROM: z.string(),
+    ADMIN_EMAIL: z.email().default("admin@example.com"),
+    ADMIN_PASSWORD: z.string().default("admin"),
   },
   client: {
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
@@ -23,6 +25,8 @@ export const env = createEnv({
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     SMTP_URL: process.env.SMTP_URL,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
   },
   emptyStringAsUndefined: true,
 });

@@ -30,7 +30,7 @@ export default function ResetPassword() {
     setError("");
     const res = await client.resetPassword({
       newPassword: password,
-      token: new URLSearchParams(window.location.search).get("token")!,
+      token: new URLSearchParams(window.location.search).get("token") || "",
     });
     if (res.error) {
       toast.error(res.error.message);
@@ -40,55 +40,51 @@ export default function ResetPassword() {
   }
   return (
     <Card>
-        <CardHeader>
-          <CardTitle>Reset password</CardTitle>
-          <CardDescription>
-            Enter new password and confirm it to reset your password
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="grid w-full items-center gap-2">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">New password</Label>
-                <Input
-                  id="password"
-                  value={password}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setPassword(e.target.value)
-                  }
-                  autoComplete="password"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Confirm password</Label>
-                <Input
-                  id="password"
-                  value={confirmPassword}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setConfirmPassword(e.target.value)
-                  }
-                  autoComplete="password"
-                  placeholder="Password"
-                />
-              </div>
+      <CardHeader>
+        <CardTitle>Reset password</CardTitle>
+        <CardDescription>
+          Enter new password and confirm it to reset your password
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid w-full items-center gap-2">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="email">New password</Label>
+              <Input
+                id="password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
+                autoComplete="password"
+                placeholder="Password"
+              />
             </div>
-            {error && (
-              <Alert variant="destructive" className="mt-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <Button
-              className="w-full mt-4"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Resetting..." : "Reset password"}
-            </Button>
-          </form>
-        </CardContent>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="email">Confirm password</Label>
+              <Input
+                id="password"
+                value={confirmPassword}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfirmPassword(e.target.value)
+                }
+                autoComplete="password"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+          {error && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <Button className="w-full mt-4" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Resetting..." : "Reset password"}
+          </Button>
+        </form>
+      </CardContent>
     </Card>
   );
 }

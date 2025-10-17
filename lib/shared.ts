@@ -1,7 +1,8 @@
 import type { ReadonlyURLSearchParams } from "next/navigation";
+import { PATHS } from "./path";
 
 const allowedCallbackSet: ReadonlySet<string> = new Set([
-  "/dashboard",
+  PATHS.dashboard,
   "/device",
 ]);
 
@@ -13,7 +14,7 @@ export const getCallbackURL = (
     if (allowedCallbackSet.has(callbackUrl)) {
       return callbackUrl;
     }
-    return "/dashboard";
+    return PATHS.dashboard;
   }
-  return "/dashboard";
+  return PATHS.dashboard;
 };

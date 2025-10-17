@@ -1,10 +1,23 @@
+import { eq } from "drizzle-orm";
+import { env } from "@/env";
+import { auth } from "@/lib/auth";
 import db from "./client";
-import { member } from "./schema/auth";
+import { user } from "./schema/auth";
 
 async function seed() {
   console.log("->> start");
-  const memberCount = await db.$count(member);
-  console.log(memberCount);
+  const data = await auth.api.createUser({
+    body: {
+      email: env.ADMIN_EMAIL,
+      password: env.ADMIN_PASSWORD,
+      name: "ADMIN",
+      role: "admin",
+    },
+  });
+  await db
+    .update(user)
+    .set({ emailVerified: true })
+    .where(eq(user.email, data.user.email));
 }
 
 seed()
@@ -14,5 +27,4 @@ seed()
   })
   .finally(() => {
     console.log("->> Done");
-    process.exit(1);
   });
