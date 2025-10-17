@@ -10,7 +10,6 @@ import { auth } from "@/lib/auth";
 import { PATHS } from "@/lib/path";
 import type {
   ActionResponse,
-  ProfileUpdateResult,
   UpdatePasswordInput,
   UpdateProfileInput,
 } from "@/types/actions";

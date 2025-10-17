@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import type { ActionResponse, UpdateProfileInput } from "@/types/actions";
 import type { ExtendedUser } from "@/types/auth";
 
 const profileSchema = z.object({

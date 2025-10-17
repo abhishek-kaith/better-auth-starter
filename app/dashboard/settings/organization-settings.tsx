@@ -22,11 +22,7 @@ import { CardSkeleton, QuickActionsSkeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useActiveOrganization } from "@/lib/auth-client";
 import { PATHS } from "@/lib/path";
-import type {
-  ActionResponse,
-  OrganizationUpdateResult,
-  UpdateOrganizationInput,
-} from "@/types/actions";
+import type { UpdateOrganizationInput } from "@/types/actions";
 
 const UpdateOrganizationSchema = z.object({
   name: z.string().min(1, "Organization name is required"),

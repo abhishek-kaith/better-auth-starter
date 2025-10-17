@@ -16,7 +16,7 @@ export type Organization = {
   logo?: string | null;
   createdAt: Date;
   updatedAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export type OrganizationMember = {
@@ -61,9 +61,9 @@ export type OrganizationUpdateResult = {
   slug: string;
   createdAt: Date;
   logo?: string | null;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 } & {
-  metadata: Record<string, any> | undefined;
+  metadata: Record<string, unknown> | undefined;
 };
 
 export type InvitationResult = {
