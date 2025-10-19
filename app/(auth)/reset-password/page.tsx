@@ -13,8 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { client } from "@/lib/auth-client";
 import { PATHS } from "@/lib/path";
 
@@ -26,17 +26,36 @@ export default function ResetPassword() {
   const router = useRouter();
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setIsSubmitting(true);
     setError("");
-    const res = await client.resetPassword({
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    await client.resetPassword({
       newPassword: password,
       token: new URLSearchParams(window.location.search).get("token") || "",
+      fetchOptions: {
+        onSuccess() {
+          toast.success("Password reset successfully");
+          router.push(PATHS.signIn);
+        },
+        onError(ctx) {
+          setError(ctx.error.message || "An error occurred. Please try again.");
+        },
+        onFinally() {
+          setIsSubmitting(false);
+        },
+      },
     });
-    if (res.error) {
-      toast.error(res.error.message);
-    }
-    setIsSubmitting(false);
-    router.push(PATHS.signIn);
   }
   return (
     <Card>
@@ -51,26 +70,26 @@ export default function ResetPassword() {
           <div className="grid w-full items-center gap-2">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">New password</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setPassword(e.target.value)
                 }
-                autoComplete="password"
+                autoComplete="new-password"
                 placeholder="Password"
               />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Confirm password</Label>
-              <Input
-                id="password"
+              <PasswordInput
+                id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setConfirmPassword(e.target.value)
                 }
-                autoComplete="password"
-                placeholder="Password"
+                autoComplete="new-password"
+                placeholder="Confirm Password"
               />
             </div>
           </div>

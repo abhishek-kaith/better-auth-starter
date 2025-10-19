@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { signUp } from "@/lib/auth-client";
 import { PATHS } from "@/lib/path";
 import { getCallbackURL } from "@/lib/shared";
@@ -55,7 +56,6 @@ export default function SignUp() {
         fetchOptions: {
           onError: (ctx) => {
             setError(ctx.error.message);
-            toast.error(ctx.error.message);
           },
           onSuccess: async () => {
             toast.success("Successfully signed up");
@@ -117,9 +117,8 @@ export default function SignUp() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
@@ -128,9 +127,8 @@ export default function SignUp() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Confirm Password</Label>
-            <Input
+            <PasswordInput
               id="password_confirmation"
-              type="password"
               value={passwordConfirmation}
               onChange={(e) => setPasswordConfirmation(e.target.value)}
               autoComplete="new-password"

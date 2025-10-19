@@ -29,17 +29,21 @@ export default function Component() {
     setIsSubmitting(true);
     setError("");
 
-    try {
-      await client.requestPasswordReset({
-        email,
-        redirectTo: "/reset-password",
-      });
-      setIsSubmitted(true);
-    } catch (_err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    await client.requestPasswordReset({
+      email,
+      redirectTo: "/reset-password",
+      fetchOptions: {
+        onSuccess() {
+          setIsSubmitted(true);
+        },
+        onError(ctx) {
+          setError(ctx.error.message || "An error occurred. Please try again.");
+        },
+        onFinally() {
+          setIsSubmitting(false);
+        },
+      },
+    });
   };
 
   if (isSubmitted) {

@@ -108,3 +108,14 @@ export type UpdatePasswordInput = {
   newPassword: string;
   confirmPassword: string;
 };
+
+// Invitation acceptance related types
+export type InvitationDetails = {
+  id: string;
+  email: string;
+  role: string;
+  organizationName: string;
+  inviterName: string;
+  expiresAt: string;
+  status: string;
+};

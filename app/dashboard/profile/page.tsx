@@ -125,19 +125,6 @@ export default async function ProfilePage() {
               </div>
               <div className="space-y-2 p-3 rounded-lg bg-muted/30">
                 <div className="text-sm font-medium text-foreground">
-                  Two-Factor Authentication
-                </div>
-                <div>
-                  <Badge
-                    variant={user.twoFactorEnabled ? "default" : "secondary"}
-                    className="text-xs px-2 py-1"
-                  >
-                    {user.twoFactorEnabled ? "✓ Enabled" : "✗ Disabled"}
-                  </Badge>
-                </div>
-              </div>
-              <div className="space-y-2 p-3 rounded-lg bg-muted/30">
-                <div className="text-sm font-medium text-foreground">
                   User ID
                 </div>
                 <p className="text-xs text-muted-foreground font-mono break-all leading-relaxed">
@@ -168,7 +155,7 @@ export default async function ProfilePage() {
                     <div>
                       <div className="font-medium">Security Settings</div>
                       <div className="text-xs text-muted-foreground">
-                        Manage passwords and 2FA
+                        Manage passwords and account security
                       </div>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ export const PATHS = {
   signUp: "/sign-up",
   forgetPassword: "/forget-password",
   resetPassword: "/reset-password",
+  setPassword: "/set-password",
   twoFactor: "/two-factor",
   acceptInvitation: (id: string) => `/accept-invitation/${id}` as const,
 } as const;

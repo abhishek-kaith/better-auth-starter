@@ -102,7 +102,7 @@ export const auth = betterAuth({
               invitedByUsername: data.inviter.user.name,
               invitedByEmail: data.inviter.user.email,
               teamName: data.organization.name,
-              inviteLink: PATHS.acceptInvitation(data.id),
+              inviteLink: `${siteConfig.url}/${PATHS.acceptInvitation(data.id)}`,
             }),
           ),
         });

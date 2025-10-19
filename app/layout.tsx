@@ -45,7 +45,7 @@ export default function RootLayout({
           tinos.variable,
         )}
       >
-        <Toaster />
+        <Toaster position="top-center" />
         <Provider>{children}</Provider>
       </body>
     </html>

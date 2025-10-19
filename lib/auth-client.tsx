@@ -41,6 +41,20 @@ export const client = createAuthClient({
     onError(e) {
       if (e.error.status === 429) {
         toast.error("Too many requests. Please try again later.");
+      } else if (e.error.status === 401) {
+        toast.error("Authentication failed. Please check your credentials.");
+      } else if (e.error.status === 403) {
+        toast.error(
+          "Access denied. You don't have permission to perform this action.",
+        );
+      } else if (e.error.status === 400) {
+        toast.error(
+          e.error.message || "Invalid request. Please check your input.",
+        );
+      } else if (e.error.status >= 500) {
+        toast.error("Server error. Please try again later.");
+      } else if (!e.error.status) {
+        toast.error("Network error. Please check your connection.");
       }
     },
   },

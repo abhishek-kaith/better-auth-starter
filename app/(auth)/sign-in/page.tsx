@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { client, signIn } from "@/lib/auth-client";
 import { PATHS } from "@/lib/path";
 import { getCallbackURL } from "@/lib/shared";
@@ -27,6 +29,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [loading, startTransition] = useTransition();
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const params = useSearchParams();
 
@@ -71,9 +74,8 @@ export default function SignIn() {
               </Link>
             </div>
 
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               placeholder="password"
               autoComplete="password"
               value={password}
@@ -91,18 +93,70 @@ export default function SignIn() {
             <Label htmlFor="remember">Remember me</Label>
           </div>
 
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           <Button
             type="submit"
             className="w-full flex items-center justify-center"
             disabled={loading}
             onClick={async () => {
               startTransition(async () => {
+                setError("");
                 await signIn.email(
                   { email, password, rememberMe },
                   {
-                    onSuccess(_context) {
+                    async onSuccess(_context) {
                       toast.success("Successfully signed in");
-                      router.push(getCallbackURL(params));
+
+                      const callbackUrl = getCallbackURL(params);
+
+                      // Check if we're returning from an invitation
+                      if (callbackUrl.includes("/accept-invitation/")) {
+                        // Extract invitation ID from URL
+                        const invitationMatch = callbackUrl.match(
+                          /\/accept-invitation\/([a-zA-Z0-9\-_]+)/,
+                        );
+                        if (invitationMatch) {
+                          const invitationId = invitationMatch[1];
+
+                          // Import the action dynamically to avoid circular dependencies
+                          const { acceptInvitation } = await import(
+                            "@/actions/invitation"
+                          );
+
+                          try {
+                            const result = await acceptInvitation({
+                              invitationId,
+                            });
+                            if (result.error) {
+                              toast.error(result.error);
+                              router.push(callbackUrl); // Still redirect to show the error
+                            } else {
+                              toast.success(
+                                result.success ||
+                                  "Welcome to the organization!",
+                              );
+                              router.push(PATHS.dashboard);
+                            }
+                          } catch (error) {
+                            console.error(
+                              "Failed to auto-accept invitation:",
+                              error,
+                            );
+                            router.push(callbackUrl); // Fall back to normal flow
+                          }
+                          return;
+                        }
+                      }
+
+                      router.push(callbackUrl);
+                    },
+                    onError(ctx) {
+                      setError(ctx.error.message);
                     },
                   },
                 );
@@ -133,7 +187,12 @@ export default function SignIn() {
               onClick={async () => {
                 await signIn.social({
                   provider: "google",
-                  callbackURL: PATHS.dashboard,
+                  callbackURL: getCallbackURL(params),
+                  fetchOptions: {
+                    onError(ctx) {
+                      setError(ctx.error.message);
+                    },
+                  },
                 });
               }}
             >
