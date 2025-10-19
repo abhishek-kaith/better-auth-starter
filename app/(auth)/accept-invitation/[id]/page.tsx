@@ -114,13 +114,14 @@ export default function AcceptInvitation() {
 
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    // Client-side validation
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
 
@@ -227,27 +228,47 @@ export default function AcceptInvitation() {
     );
   }
 
-  // Check if invitation is expired
+  // Check invitation status and expiry
   const isExpired = new Date(invitation.expiresAt) < new Date();
-  if (isExpired) {
+  const isAccepted = invitation.status === "accepted";
+  const isCancelled = invitation.status === "cancelled";
+  const isInvalid = invitation.status !== "pending" || isExpired;
+
+  if (isInvalid) {
+    let title = "Invalid Invitation";
+    let description = "This invitation is no longer valid.";
+    let alertMessage = "";
+
+    if (isExpired) {
+      title = "Invitation Expired";
+      description = "This invitation has expired and can no longer be used.";
+      alertMessage = `This invitation expired on ${new Date(invitation.expiresAt).toLocaleDateString()}`;
+    } else if (isAccepted) {
+      title = "Invitation Already Used";
+      description = "This invitation has already been accepted and used.";
+      alertMessage =
+        "This invitation has already been accepted. If you need access, please contact your organization administrator.";
+    } else if (isCancelled) {
+      title = "Invitation Cancelled";
+      description =
+        "This invitation has been cancelled and is no longer valid.";
+      alertMessage =
+        "This invitation was cancelled by the organization. Please contact your organization administrator if you believe this is an error.";
+    }
+
     return (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-destructive" />
-            Invitation Expired
+            {title}
           </CardTitle>
-          <CardDescription>
-            This invitation has expired and can no longer be used.
-          </CardDescription>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              This invitation expired on{" "}
-              {new Date(invitation.expiresAt).toLocaleDateString()}
-            </AlertDescription>
+            <AlertDescription>{alertMessage}</AlertDescription>
           </Alert>
           <div className="mt-4">
             <Link href={PATHS.signIn}>
@@ -431,7 +452,15 @@ export default function AcceptInvitation() {
                 onClick={resetPasswordForm}
                 disabled={accepting}
               >
-                Reset
+                Clear Fields
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowPasswordForm(false)}
+                disabled={accepting}
+              >
+                Cancel
               </Button>
             </div>
           </form>

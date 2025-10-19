@@ -85,8 +85,19 @@ export async function acceptInvitation(input: {
       return { error: "This invitation has expired" };
     }
 
+    // Check invitation status with specific error messages
+    if (invitationDetails.status === "accepted") {
+      return { error: "This invitation has already been accepted and used" };
+    }
+
+    if (invitationDetails.status === "cancelled") {
+      return {
+        error: "This invitation has been cancelled and is no longer valid",
+      };
+    }
+
     if (invitationDetails.status !== "pending") {
-      return { error: "This invitation has already been used" };
+      return { error: "This invitation is no longer valid" };
     }
 
     // Get the invitation record to get the organization ID early
@@ -312,6 +323,87 @@ export async function getPendingInvitationForUser(
 }
 
 /**
+ * Get all invitations for current user's organization
+ */
+export async function getOrganizationInvitations(): Promise<
+  ActionResponse<InvitationDetails[]>
+> {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return { error: "Unauthorized" };
+    }
+
+    // Get user's active organization
+    const organizations = await auth.api.listOrganizations({
+      headers: await headers(),
+    });
+
+    if (!organizations || organizations.length === 0) {
+      return { data: [] };
+    }
+
+    const activeOrg = organizations[0];
+
+    // Get all invitations for this organization
+    const invitations = await db
+      .select({
+        invitation,
+        inviter: user,
+      })
+      .from(invitation)
+      .leftJoin(user, eq(invitation.inviterId, user.id))
+      .where(eq(invitation.organizationId, activeOrg.id));
+
+    const result: InvitationDetails[] = invitations.map((inv) => ({
+      id: inv.invitation.id,
+      email: inv.invitation.email,
+      role: inv.invitation.role || "member",
+      organizationName: activeOrg.name,
+      inviterName: inv.inviter?.name || "Unknown",
+      expiresAt: inv.invitation.expiresAt.toISOString(),
+      status: inv.invitation.status,
+    }));
+
+    return { data: result };
+  } catch (error) {
+    console.error("Error getting organization invitations:", error);
+    return { error: "Failed to get invitations" };
+  }
+}
+
+/**
+ * Cancel/revoke an invitation
+ */
+export async function cancelInvitation(
+  invitationId: string,
+): Promise<ActionResponse> {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return { error: "Unauthorized" };
+    }
+
+    // Update invitation status to cancelled
+    await db
+      .update(invitation)
+      .set({ status: "cancelled" })
+      .where(eq(invitation.id, invitationId));
+
+    return { success: "Invitation cancelled successfully" };
+  } catch (error) {
+    console.error("Error cancelling invitation:", error);
+    return { error: "Failed to cancel invitation" };
+  }
+}
+
+/**
  * Resend an invitation email
  * Note: This would need to be implemented based on available Better Auth APIs
  */
@@ -333,30 +425,5 @@ export async function resendInvitation(
   } catch (error) {
     console.error("Error resending invitation:", error);
     return { error: "Failed to resend invitation" };
-  }
-}
-
-/**
- * Cancel/revoke an invitation
- * Note: This would need to be implemented based on available Better Auth APIs
- */
-export async function cancelInvitation(
-  _invitationId: string,
-): Promise<ActionResponse> {
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session?.user) {
-      return { error: "Unauthorized" };
-    }
-
-    // TODO: Implement when Better Auth supports canceling invitations
-    // For now, return an error indicating it's not implemented
-    return { error: "Cancel invitation is not yet implemented" };
-  } catch (error) {
-    console.error("Error cancelling invitation:", error);
-    return { error: "Failed to cancel invitation" };
   }
 }

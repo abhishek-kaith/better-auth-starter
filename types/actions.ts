@@ -92,7 +92,7 @@ export type UpdateOrganizationInput = {
 
 export type InviteMemberInput = {
   email: string;
-  role: "admin" | "member";
+  role: "admin" | "member" | "owner";
 };
 
 export type RemoveMemberInput = {

@@ -163,16 +163,14 @@ export default function SignIn() {
               });
             }}
           >
-            <div className="flex items-center justify-between w-full">
-              <span className="flex-1">
-                {loading ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  "Login"
-                )}
-              </span>
-              {client.isLastUsedLoginMethod("email") && <LastUsedIndicator />}
-            </div>
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <>
+                <span>Login</span>
+                {client.isLastUsedLoginMethod("email") && <LastUsedIndicator />}
+              </>
+            )}
           </Button>
 
           <div

@@ -83,6 +83,7 @@ export const auth = betterAuth({
   },
   plugins: [
     organization({
+      // Allow verified admin users to create organizations
       allowUserToCreateOrganization: async (user) => {
         const u = await db.query.user.findFirst({
           where: (fields, operators) => operators.eq(fields.id, user.id),
@@ -92,10 +93,24 @@ export const auth = betterAuth({
         }
         return false;
       },
+
+      // Organization and membership limits
+      organizationLimit: 5, // Max organizations per user
+      membershipLimit: 100, // Max members per organization
+      invitationLimit: 50, // Max invitations per user
+
+      // Role configuration
+      creatorRole: "owner", // Organization creator gets owner role
+
+      // Invitation settings
+      invitationExpiresIn: 48 * 60 * 60, // 48 hours in seconds
+      requireEmailVerificationOnInvitation: false,
+
+      // Custom invitation email
       async sendInvitationEmail(data) {
         await sendEmail({
           to: data.email,
-          subject: `You've been invited to join ${siteConfig.name}`,
+          subject: `You've been invited to join ${data.organization.name}`,
           html: await render(
             reactInvitationEmail({
               username: data.email,
